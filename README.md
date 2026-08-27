@@ -1,129 +1,170 @@
-# ✈️ Flight Price Prediction
+# ✈️ Flight Price Prediction — Data Preprocessing & EDA
 
-A Machine Learning project that predicts **flight ticket prices** based on various flight-related features such as airline, source, destination, journey date, departure time, arrival time, duration, and number of stops.
+This project focuses on **Exploratory Data Analysis (EDA)** and **data preprocessing** of a flight price dataset using Python and Jupyter Notebook.
+
+The main objective of this project is to understand the dataset, handle missing values, perform feature engineering, and convert categorical data into numerical data using **One-Hot Encoding** so that the dataset can later be used for Machine Learning models.
+
+---
 
 ## 📌 Project Overview
 
-Flight prices depend on several factors, including:
+Flight price datasets contain a mixture of numerical and categorical features such as airline, source, destination, journey date, departure time, arrival time, and number of stops.
 
-* ✈️ Airline
-* 📍 Source
-* 🎯 Destination
-* 📅 Date of Journey
-* 🕐 Departure Time
-* 🕐 Arrival Time
-* 🔄 Total Stops
-* ⏱️ Flight Duration
+Machine Learning algorithms generally require numerical input, so this project explores and preprocesses these features to prepare the data for future flight price prediction.
 
-The goal of this project is to preprocess flight data, perform exploratory data analysis, transform categorical features into numerical values, and build a Machine Learning model capable of predicting flight prices.
+### Main tasks performed
+
+* Data loading and inspection
+* Exploratory Data Analysis (EDA)
+* Identification of missing values
+* Handling categorical features
+* Feature extraction from date and time columns
+* One-Hot Encoding
+* Data preprocessing for Machine Learning
 
 ---
 
 ## 🛠️ Technologies Used
 
 * **Python**
-* **Pandas**
-* **NumPy**
-* **Matplotlib**
-* **Seaborn**
-* **Scikit-learn**
+* **Pandas** — Data manipulation and analysis
+* **NumPy** — Numerical operations
+* **Matplotlib** — Data visualization
+* **Seaborn** — Data visualization
+* **Scikit-learn** — Machine Learning preprocessing
 * **Jupyter Notebook**
+* **Visual Studio Code**
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-Flight-Price-Prediction/
+ONE_HEAT_ENCODING/
 │
-├── data/
-│   └── Data_Train.xlsx
-│
-├── notebooks/
-│   └── Flight_Price_Prediction.ipynb
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+├── EDA_1.ipynb
+├── flight_price.xlsx
+└── README.md
 ```
 
----
+### `EDA_1.ipynb`
 
-## 📊 Dataset
+The main Jupyter Notebook containing:
 
-The dataset contains information about different flights and their ticket prices.
+* Data exploration
+* Data cleaning
+* Missing-value analysis
+* Feature engineering
+* Categorical encoding
+* Exploratory analysis
 
-Important columns include:
+### `flight_price.xlsx`
 
-| Feature           | Description                           |
-| ----------------- | ------------------------------------- |
-| `Airline`         | Airline operating the flight          |
-| `Date_of_Journey` | Date on which the journey takes place |
-| `Source`          | Starting location                     |
-| `Destination`     | Destination location                  |
-| `Route`           | Flight route                          |
-| `Dep_Time`        | Departure time                        |
-| `Arrival_Time`    | Arrival time                          |
-| `Duration`        | Total flight duration                 |
-| `Total_Stops`     | Number of stops                       |
-| `Additional_Info` | Additional flight information         |
-| `Price`           | Flight ticket price — target variable |
+The original flight price dataset used for analysis and preprocessing.
+
+### `README.md`
+
+Project documentation and setup instructions.
 
 ---
 
-## 🔄 Data Preprocessing
+## 🔍 Exploratory Data Analysis
 
-The project performs several preprocessing steps before training the Machine Learning model.
+The notebook starts by loading the dataset and inspecting its structure.
 
-### 1. Handling Missing Values
+Typical operations include:
 
-Missing values are identified using:
+```python
+df.head()
+```
+
+```python
+df.info()
+```
+
+```python
+df.describe()
+```
+
+These operations help understand:
+
+* Number of rows and columns
+* Data types
+* Numerical statistics
+* Missing values
+* Categorical features
+
+---
+
+## 🧹 Data Preprocessing
+
+Several preprocessing techniques were explored in the project.
+
+### Handling Missing Values
+
+Missing values can be identified using:
 
 ```python
 df.isnull().sum()
 ```
 
-For example, the most frequent value of `Total_Stops` can be found using:
+For example, the most common value of a categorical column can be found using:
 
 ```python
 df["Total_Stops"].mode()
 ```
 
+Missing values can then be handled using appropriate techniques such as `fillna()`.
+
 ---
 
-### 2. Extracting Arrival Time
+## 🕐 Feature Engineering
 
-The arrival time is separated into hour and minute:
+Time-related columns can contain more information than just the original value.
+
+For example, `Arrival_Time` can be separated into:
+
+* Arrival Hour
+* Arrival Minute
+
+Example:
 
 ```python
 df["Arrival_Time"] = df["Arrival_Time"].str.split(" ").str[0]
 
 df["Arrival_Hour"] = df["Arrival_Time"].str.split(":").str[0]
+
 df["Arrival_Minute"] = df["Arrival_Time"].str.split(":").str[1]
 ```
 
-Similar preprocessing can be applied to departure time.
+This converts a time such as:
 
----
-
-### 3. Removing Unnecessary Columns
-
-Columns that are no longer required can be removed using:
-
-```python
-df.drop("Date_of_Journey", axis=1, inplace=True)
+```text
+22:30
 ```
 
-Here:
+into:
 
-* `axis=1` means column
-* `inplace=True` modifies the original DataFrame
+```text
+Arrival_Hour   → 22
+Arrival_Minute → 30
+```
 
 ---
 
-### 4. One-Hot Encoding
+## 🔢 One-Hot Encoding
 
-Categorical features such as `Airline`, `Source`, and `Destination` are converted into numerical features.
+Categorical columns such as:
+
+* Airline
+* Source
+* Destination
+
+cannot be directly used by many Machine Learning algorithms.
+
+Therefore, **One-Hot Encoding** is used to convert categorical values into numerical features.
+
+Example:
 
 ```python
 from sklearn.preprocessing import OneHotEncoder
@@ -135,158 +176,129 @@ encoded = encoder.fit_transform(
 ).toarray()
 ```
 
-This converts categorical values into numerical `0` and `1` values.
-
----
-
-## 🤖 Machine Learning
-
-After preprocessing, the dataset is divided into:
+For example, an airline column:
 
 ```text
-Training Data
-      ↓
-Machine Learning Model
-      ↓
-Predicted Flight Price
+Air India
+IndiGo
+Jet Airways
 ```
 
-The target variable is:
+can be converted into numerical columns such as:
 
-```python
-Price
+```text
+Air India    IndiGo    Jet Airways
+    1           0           0
+    0           1           0
+    0           0           1
 ```
 
-The remaining relevant features are used as input variables.
+This makes categorical information suitable for Machine Learning algorithms.
 
 ---
 
-## 📈 Model Evaluation
+## 📊 Dataset Features
 
-The trained model can be evaluated using regression metrics such as:
+Some of the important features in the dataset include:
 
-* Mean Absolute Error (MAE)
-* Mean Squared Error (MSE)
-* Root Mean Squared Error (RMSE)
-* R² Score
-
-Example:
-
-```python
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-
-mae = mean_absolute_error(y_test, y_pred)
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-
-print("MAE:", mae)
-print("MSE:", mse)
-print("R2 Score:", r2)
-```
+| Feature           | Description                   |
+| ----------------- | ----------------------------- |
+| `Airline`         | Airline operating the flight  |
+| `Date_of_Journey` | Date of the journey           |
+| `Source`          | Starting location             |
+| `Destination`     | Destination location          |
+| `Route`           | Flight route                  |
+| `Dep_Time`        | Departure time                |
+| `Arrival_Time`    | Arrival time                  |
+| `Duration`        | Total flight duration         |
+| `Total_Stops`     | Number of stops               |
+| `Additional_Info` | Additional flight information |
+| `Price`           | Flight ticket price           |
 
 ---
 
-## 🚀 How to Run the Project
+## 💻 How to Run the Project
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Flight-Price-Prediction.git
+git clone https://github.com/TechNinja-01/ONE_HEAT_ENCODING.git
 ```
 
-### 2. Navigate to the project
+### 2. Open the project in VS Code
+
+Open the project folder in **Visual Studio Code**.
+
+### 3. Install required libraries
 
 ```bash
-cd Flight-Price-Prediction
+pip install pandas numpy matplotlib seaborn scikit-learn openpyxl jupyter
 ```
 
-### 3. Create a virtual environment
+### 4. Open the notebook
 
-```bash
-python -m venv venv
-```
-
-Activate it on Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-On Linux/macOS:
-
-```bash
-source venv/bin/activate
-```
-
-### 4. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 5. Start Jupyter Notebook
-
-```bash
-jupyter notebook
-```
-
-Open the project notebook and run the cells sequentially.
-
----
-
-## 📦 Requirements
-
-Example `requirements.txt`:
+Open:
 
 ```text
-pandas
-numpy
-matplotlib
-seaborn
-scikit-learn
-openpyxl
-jupyter
+EDA_1.ipynb
 ```
 
----
+in VS Code.
 
-## 🎯 Project Goals
+Make sure the **Jupyter extension** is installed in VS Code.
 
-The main objectives of this project are:
+### 5. Select a Python kernel
 
-* Understand and clean real-world flight data
-* Handle missing values
-* Perform feature engineering
-* Encode categorical variables
-* Prepare data for Machine Learning
-* Train a regression model
-* Evaluate model performance
-* Predict flight ticket prices
+In the notebook, select your Python environment/kernel and run the cells sequentially.
 
 ---
 
-## 🔮 Future Improvements
+## 🎯 Learning Objectives
 
-Possible improvements include:
+Through this project, the following concepts are practiced:
 
-* Add more Machine Learning models
-* Perform hyperparameter tuning
-* Improve feature engineering
-* Compare multiple regression algorithms
-* Build a Streamlit web application
-* Deploy the prediction model
-* Add an interactive flight price prediction interface
+* Understanding Pandas DataFrames
+* Reading Excel datasets
+* Data inspection
+* Missing-value detection
+* Handling categorical data
+* Feature engineering
+* Working with date and time features
+* One-Hot Encoding
+* Basic EDA
+* Preparing data for Machine Learning
+
+---
+
+## 🚀 Future Improvements
+
+The project can be extended into a complete **Flight Price Prediction** Machine Learning project.
+
+Possible next steps:
+
+1. Complete data cleaning
+2. Perform more detailed EDA
+3. Convert all required features into numerical form
+4. Split the dataset into training and testing sets
+5. Train Machine Learning models
+6. Compare model performance
+7. Perform hyperparameter tuning
+8. Evaluate predictions
+9. Build a simple prediction application
 
 ---
 
 ## 👨‍💻 Author
 
-**Harsh Soni**
+**TechNinja-01**
 
-B.Tech Computer Science Engineering
+GitHub:
+https://github.com/TechNinja-01
 
 ---
 
-## ⭐ If You Like This Project
+## ⭐ Project Status
 
-If you found this project useful, consider giving the repository a ⭐ on GitHub.
+🚧 **Currently in development**
+
+This repository currently focuses on **EDA and data preprocessing**, with One-Hot Encoding as one of the major preprocessing techniques explored.
